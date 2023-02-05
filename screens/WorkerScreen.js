@@ -20,7 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AtSymbolIcon } from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import WorkerHomeRootComponent from "../components/worker/WorkerHomeRootComponent";
+import WorkerRequests from "../components/worker/WorkerRequests";
 
 // basically fro tab
 
@@ -55,7 +55,7 @@ const WorkerScreen = () => {
     });
   }, []);
 
-  return <WorkerHomeRootComponent />;
+  return <WorkerRequests />;
 };
 
 export default WorkerScreen;

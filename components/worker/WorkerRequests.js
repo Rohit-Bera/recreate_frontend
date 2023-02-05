@@ -23,7 +23,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 // basically fro tab
 
-const WorkerHomeRootComponent = () => {
+const WorkerRequests = () => {
   const navigation = useNavigation();
 
   // useEffect(() => {
@@ -57,10 +57,11 @@ const WorkerHomeRootComponent = () => {
   return (
     <SafeAreaView>
       <View>
-        <Text>all components of worker will be included in this</Text>
+        <UserNav />
+        <Text>User service with nav</Text>
       </View>
     </SafeAreaView>
   );
 };
 
-export default WorkerHomeRootComponent;
+export default WorkerRequests;

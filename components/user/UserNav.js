@@ -17,7 +17,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { WrenchScrewdriverIcon } from "react-native-heroicons/solid";
+import {
+  WrenchScrewdriverIcon,
+  GiftIcon,
+  ClipboardDocumentCheckIcon,
+  UserCircleIcon,
+} from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 // images
@@ -27,7 +32,7 @@ import Logo from "../../assets/REcREATE.png";
 
 // basically fro tab
 
-const UserNav = () => {
+const UserNav = (prop) => {
   const navigation = useNavigation();
 
   // useEffect(() => {
@@ -60,46 +65,112 @@ const UserNav = () => {
   //   --------------------------
 
   return (
-    <View
-      style={{
-        backgroundColor: "#B9F3FC",
-      }}
-    >
-      <Image
-        source={Logo}
-        style={{
-          height: 100,
-          width: 115,
-          marginLeft: 20,
-        }}
-      />
+    <KeyboardAwareScrollView>
       <View
         style={{
-          justifyContent: "space-around",
-          alignItems: "center",
-          flexDirection: "row",
+          backgroundColor: "#B9F3FC",
         }}
       >
-        <TouchableOpacity
+        <Image
+          source={Logo}
+          style={{
+            height: 90,
+            width: 115,
+            marginLeft: 20,
+          }}
+        />
+
+        <View
           style={{
             justifyContent: "space-around",
             alignItems: "center",
+            flexDirection: "row",
+            //   backgroundColor: "green",
+            height: 60,
           }}
         >
-          <WrenchScrewdriverIcon color={"#38b6ff"} size={40} />
-          <Text>services</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>bookings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>coupons</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text>account</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+            onPress={() => navigation.navigate("UserServices")}
+          >
+            <WrenchScrewdriverIcon
+              color={prop.fromService === true ? "#38b6ff" : "#A8A8A8"}
+              size={33}
+            />
+            <Text
+              style={{
+                color: prop.fromService === true ? "#38b6ff" : "#A8A8A8",
+              }}
+            >
+              services
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+            onPress={() => navigation.navigate("UserBookings")}
+          >
+            <ClipboardDocumentCheckIcon
+              color={prop.fromBookings === true ? "#38b6ff" : "#A8A8A8"}
+              size={33}
+            />
+            <Text
+              style={{
+                color: prop.fromBookings === true ? "#38b6ff" : "#A8A8A8",
+              }}
+            >
+              bookings
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+            onPress={() => navigation.navigate("UserRewards")}
+          >
+            <GiftIcon
+              color={prop.fromRewards === true ? "#38b6ff" : "#A8A8A8"}
+              size={33}
+            />
+            <Text
+              style={{
+                color: prop.fromRewards === true ? "#38b6ff" : "#A8A8A8",
+              }}
+            >
+              coupons
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+            onPress={() => navigation.navigate("UserAccount")}
+          >
+            <UserCircleIcon
+              color={prop.fromAccount === true ? "#38b6ff" : "#A8A8A8"}
+              size={33}
+            />
+            <Text
+              style={{
+                color: prop.fromAccount === true ? "#38b6ff" : "#A8A8A8",
+              }}
+            >
+              account
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </KeyboardAwareScrollView>
   );
 };
 

@@ -21,6 +21,7 @@ import { AtSymbolIcon } from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import UserNav from "./UserNav";
+import { useSelector } from "react-redux";
 
 // basically fro tab
 
@@ -55,14 +56,32 @@ const UserServices = () => {
     });
   }, []);
 
-  return (
-    <SafeAreaView>
-      <View>
-        <UserNav />
-        <Text>User service with nav</Text>
-      </View>
-    </SafeAreaView>
-  );
+  const fromService = true;
+
+  const userToken = useSelector((state) => state.user).token;
+  console.log("userToken: ", userToken);
+
+  if (userToken !== "") {
+    return (
+      <SafeAreaView>
+        <View>
+          <UserNav fromService />
+          <Text>User service with nav</Text>
+          <Text>User is logged in!</Text>
+        </View>
+      </SafeAreaView>
+    );
+  } else {
+    return (
+      <SafeAreaView>
+        <View>
+          <UserNav fromService />
+          <Text>User service with nav</Text>
+          <Text>User is not logged in!</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 };
 
 export default UserServices;

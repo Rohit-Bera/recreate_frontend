@@ -58,7 +58,8 @@ const WorkerRequests = () => {
     <SafeAreaView>
       <View>
         <UserNav />
-        <Text>User service with nav</Text>
+        <Text>worker home page with nav</Text>
+        <Text>Worker has logged in!</Text>
       </View>
     </SafeAreaView>
   );

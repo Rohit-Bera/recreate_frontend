@@ -23,9 +23,8 @@ import { useSelector } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 //
-import UserScreen from "./UserScreen";
-import WorkerScreen from "./WorkerScreen";
 import AdminDashboard from "./AdminDashboard";
+import UserServices from "../components/user/UserServices";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -66,11 +65,13 @@ const HomeScreen = () => {
   console.log("adminToken: ", adminToken);
 
   if (userToken !== "") {
-    return <UserScreen />;
+    return <UserServices />;
   } else if (workerToken !== "") {
     return <WorkerScreen />;
   } else if (adminToken !== "") {
     return <AdminDashboard />;
+  } else {
+    return <UserServices />;
   }
 };
 

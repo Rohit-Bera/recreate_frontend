@@ -111,13 +111,16 @@ const LoginScreen = ({ history }) => {
 
         if (user.type === "user") {
           dispatch(userData({ user, token }));
+          navigation.navigate("UserServices");
         } else if (user.type === "worker") {
           dispatch(workerData({ user, token }));
+          navigation.navigate("WorkerRequests");
         } else if (user.type === "admin") {
           dispatch(adminData({ token, user }));
+          navigation.navigate("theOwnerAdmin");
         }
 
-        navigation.navigate("Home");
+        // navigation.navigate("Home");
       } else if (error) {
         console.log("error consoled: ", error);
         ToastAndroid.show(

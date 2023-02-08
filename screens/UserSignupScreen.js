@@ -47,7 +47,7 @@ const UserSignupScreen = () => {
 
   const inputColor = "#B9F3FC";
 
-  if (Platform.OS === "android") {
+  if (Platform.OS === "android" || Platform.OS === "ios") {
     return (
       <KeyboardAwareScrollView
         style={{ flex: 1, backgroundColor: inputColor }}

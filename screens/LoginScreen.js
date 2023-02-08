@@ -17,7 +17,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
-import { AtSymbolIcon } from "react-native-heroicons/solid";
+import {
+  AtSymbolIcon,
+  EyeIcon,
+  EyeSlashIcon,
+} from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { loginServices } from "../services/Oneforall";
@@ -35,6 +39,7 @@ const LoginScreen = ({ history }) => {
     password: "",
   });
   const [onLoad, setLoader] = useState(false);
+  const [showPwd, setShowPwd] = useState(true);
   const dispatch = useDispatch();
 
   // navigation
@@ -94,6 +99,7 @@ const LoginScreen = ({ history }) => {
 
       if (response) {
         const { token, user } = response;
+        console.log("user: ", user);
 
         console.log("response: ", response);
 
@@ -116,7 +122,8 @@ const LoginScreen = ({ history }) => {
           dispatch(workerData({ user, token }));
           navigation.navigate("WorkerRequests");
         } else if (user.type === "admin") {
-          dispatch(adminData({ token, user }));
+          console.log("user.type: ", user.type);
+          dispatch(adminData({ user, token }));
           navigation.navigate("theOwnerAdmin");
         }
 
@@ -128,6 +135,53 @@ const LoginScreen = ({ history }) => {
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
+        setLoader(false);
+      }
+    }
+  };
+
+  const signInWeb = async () => {
+    setLoader(true);
+    if (logUser.email === "" || logUser.password === "") {
+      console.log("logUser: ", logUser);
+
+      alert("please enter all details");
+
+      setLoader(false);
+    } else {
+      const reply = await loginServices(logUser);
+
+      const { response, error } = reply;
+
+      if (response) {
+        const { token, user } = response;
+        console.log("user: ", user);
+
+        console.log("response: ", response);
+
+        setLoader(false);
+        setLogUser({
+          email: "",
+          password: "",
+        });
+
+        alert(`Sign in Successfull!`);
+
+        if (user.type === "user") {
+          dispatch(userData({ user, token }));
+          navigation.navigate("UserServices");
+        } else if (user.type === "worker") {
+          dispatch(workerData({ user, token }));
+          navigation.navigate("WorkerRequests");
+        } else if (user.type === "admin") {
+          dispatch(adminData({ user, token }));
+          navigation.navigate("theOwnerAdmin");
+        }
+
+        // navigation.navigate("Home");
+      } else if (error) {
+        console.log("error consoled: ", error);
+        alert(`${error.message}`);
         setLoader(false);
       }
     }
@@ -292,8 +346,8 @@ const LoginScreen = ({ history }) => {
           {/* form */}
           <div
             style={{
-              height: "80vh",
-              width: "50vw",
+              height: "90vh",
+              width: "53vw",
               display: "flex",
               justifyContent: "space-around",
               alignItems: "center",
@@ -314,7 +368,7 @@ const LoginScreen = ({ history }) => {
             <div
               style={{
                 fontFamily: "Raleway",
-                height: "50vh",
+                height: "80vh",
                 width: "30vw",
                 display: "flex",
                 justifyContent: "space-around",
@@ -323,43 +377,69 @@ const LoginScreen = ({ history }) => {
                 // backgroundColor: "blue",
               }}
             >
-              <h2>Sign In to REcREATE</h2>
-              <form
+              <h4>Sign In to REcREATE</h4>
+              <div
                 style={{
                   display: "flex",
                   justifyContent: "space-around",
                   alignItems: "flex-start",
                   flexDirection: "column",
+                  // backgroundColor: "green",
+                  width: "90%",
                 }}
               >
-                <h3 style={{}}>Email Address</h3>
-                <input
+                <h5 style={{}}>Email Address</h5>
+                <TextInput
                   type="text"
                   style={{
-                    height: "4vh",
-                    width: "20vw",
-                    fontSize: "15px",
+                    height: 17,
+                    width: 150,
+                    fontSize: "10px",
                     border: "1px solid blue",
                     outline: "none",
                     backgroundColor: "aqua",
                     borderRadius: "5px",
                     boxShadow: "0px 0px 12px 2px #38b6ff",
+                    color: "black",
                   }}
+                  onChangeText={(text) => setFields(text, "email")}
                 />
-                <h3>Password</h3>
-                <input
-                  type="text"
+                <h5>Password</h5>
+                <span
                   style={{
-                    height: "4vh",
-                    width: "20vw",
-                    fontSize: "15px",
-                    border: "1px solid blue",
-                    outline: "none",
-                    backgroundColor: "aqua",
-                    borderRadius: "5px",
-                    boxShadow: "0px 0px 12px 2px #38b6ff",
+                    display: "flex",
+                    justifyContent: "space-around",
+                    alignItems: "center",
                   }}
-                />
+                >
+                  <TextInput
+                    type="text"
+                    style={{
+                      height: 17,
+                      width: 150,
+                      fontSize: "10px",
+                      border: "1px solid blue",
+                      outline: "none",
+                      backgroundColor: "aqua",
+                      borderRadius: "5px",
+                      boxShadow: "0px 0px 12px 2px #38b6ff",
+                      color: "black",
+                    }}
+                    secureTextEntry={showPwd}
+                    onChangeText={(text) => setFields(text, "password")}
+                  />
+                  <TouchableOpacity
+                    onPress={() =>
+                      showPwd === false ? setShowPwd(true) : setShowPwd(false)
+                    }
+                  >
+                    {showPwd === true ? (
+                      <EyeIcon size={15} color={"aqua"} />
+                    ) : (
+                      <EyeSlashIcon size={15} color={"aqua"} />
+                    )}
+                  </TouchableOpacity>
+                </span>
                 <div
                   style={{
                     height: "10vh",
@@ -371,77 +451,29 @@ const LoginScreen = ({ history }) => {
                 >
                   <TouchableOpacity
                     style={{
-                      color: "grey",
-                      height: "4vh",
-                      width: "8vw",
-                      outline: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "15px",
-                      display: "flex",
-                      justifyContent: "space-around",
-                      alignItems: "center",
-                    }}
-                    onPress={() => navigation.navigate("Forgotpassword")}
-                  >
-                    <Text>forgot password?</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={{
-                      height: "5vh",
-                      borderRadius: "8px",
+                      height: 23,
+                      borderRadius: 5,
                       backgroundColor: "#38b6ff",
                       outline: "none",
                       border: "2px solid #38b6ff",
-                      width: "8vw",
+                      width: 100,
                       cursor: "pointer",
                       display: "flex",
                       justifyContent: "space-around",
                       alignItems: "center",
                     }}
-                    onPress={() => signIn()}
+                    onPress={() => signInWeb()}
                   >
-                    <Text
-                      style={{
-                        color: "white",
-
-                        fontSize: "15px",
-                      }}
-                    >
-                      Sign In
-                    </Text>
+                    {onLoad ? (
+                      <ActivityIndicator size={10} color={"white"} />
+                    ) : (
+                      <Text style={{ color: "white", fontSize: 15 }}>
+                        sign In
+                      </Text>
+                    )}
                   </TouchableOpacity>
                 </div>
-
-                <div
-                  style={{
-                    height: "10vh",
-                    width: "18vw",
-                    display: "flex",
-                    justifyContent: "space-around",
-                    alignItems: "center",
-                  }}
-                >
-                  <h4>Not a Member ?</h4>
-                  <TouchableOpacity
-                    style={{
-                      color: "grey",
-                      height: "4vh",
-                      width: "9vw",
-                      outline: "none",
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: "15px",
-                      display: "flex",
-                      justifyContent: "space-around",
-                      alignItems: "center",
-                    }}
-                    onPress={() => navigation.navigate("Signup")}
-                  >
-                    <Text>Sign Up now</Text>
-                  </TouchableOpacity>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
         </div>

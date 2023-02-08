@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 // navigation center for android
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
@@ -78,6 +77,9 @@ const MainApp = () => {
           <Stack.Screen name="UserRewards" component={UserRewards} />
           <Stack.Screen name="UserAccount" component={UserAccount} />
           <Stack.Screen name="WorkerSignup" component={WorkerSignupScreen} />
+
+          {/* admin home page */}
+          <Stack.Screen name="theOwnerAdmin" component={AdminDashboard} />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -1,3 +1,3 @@
-<!-- splash screen -->
+run to start the frotend :
 
-expo install expo-splash-screen
+-> npm run start

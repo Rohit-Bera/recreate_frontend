@@ -6,11 +6,14 @@ const workerDataSlice = createSlice({
     _id: "",
     name: "",
     city: "",
+    State: "",
     pincode: "",
     email: "",
     phone: "",
     type: "",
     token: "",
+    profession: "",
+    workerExperience: "",
   },
 
   reducers: {
@@ -20,7 +23,17 @@ const workerDataSlice = createSlice({
 
       state.token = token;
 
-      const { _id, address, city, email, name, phone, pincode, type } = user;
+      const {
+        _id,
+        city,
+        email,
+        name,
+        phone,
+        pincode,
+        type,
+        profession,
+        workerExperience,
+      } = user;
 
       state._id = _id;
       state.name = name;
@@ -29,7 +42,9 @@ const workerDataSlice = createSlice({
       state.email = email;
       state.phone = phone;
       state.type = type;
-      state.address = address;
+      state.State = user.state;
+      state.profession = profession;
+      state.workerExperience = workerExperience;
       console.log("worker state._id: ", state._id);
       console.log("worker state.name: ", state.name);
       console.log("worker state.city: ", state.city);
@@ -37,7 +52,7 @@ const workerDataSlice = createSlice({
       console.log("worker state.email: ", state.email);
       console.log("worker state.phone: ", state.phone);
       console.log("worker state.type: ", state.type);
-      console.log("worker state.address: ", state.address);
+      console.log("state.State: ", state.State);
     },
   },
 });

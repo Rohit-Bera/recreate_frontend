@@ -59,7 +59,7 @@ const SignupScreen = () => {
               marginTop: 40,
             }}
           >
-            <Image source={signupsvg} />
+            <Image source={signupsvg} style={{ height: 290, width: 380 }} />
           </View>
           <View
             style={{

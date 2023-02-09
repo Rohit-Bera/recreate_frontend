@@ -209,9 +209,11 @@ const LoginScreen = ({ history }) => {
             style={{
               justifyContent: "space-around",
               alignItems: "center",
+              marginTop: 15,
+              marginBottom: 15,
             }}
           >
-            <Image source={loginSVG} style={{ height: 200, width: 250 }} />
+            <Image source={loginSVG} style={{ height: 240, width: 320 }} />
           </View>
 
           <Text
@@ -246,19 +248,35 @@ const LoginScreen = ({ history }) => {
               onChangeText={(text) => setFields(text, "email")}
             />
             <Text>Password</Text>
-            <TextInput
-              secureTextEntry={true}
-              style={{
-                backgroundColor: inputColor,
-                fontSize: 15,
-                fontWeight: "700",
-                borderRadius: 5,
-                height: 40,
-                color: "#38b6ff",
-                padding: 10,
-              }}
-              onChangeText={(text) => setFields(text, "password")}
-            />
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <TextInput
+                secureTextEntry={showPwd}
+                style={{
+                  backgroundColor: inputColor,
+                  fontSize: 15,
+                  fontWeight: "700",
+                  borderRadius: 5,
+                  height: 40,
+                  color: "#38b6ff",
+                  padding: 10,
+                  width: 300,
+                }}
+                onChangeText={(text) => setFields(text, "password")}
+              />
+              <TouchableOpacity
+                onPress={() =>
+                  showPwd === false ? setShowPwd(true) : setShowPwd(false)
+                }
+              >
+                {showPwd === true ? (
+                  <EyeIcon size={30} color={"#38b6ff"} />
+                ) : (
+                  <EyeSlashIcon size={30} color={"#38b6ff"} />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
 
           <View

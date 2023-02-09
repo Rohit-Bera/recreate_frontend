@@ -85,6 +85,11 @@ const UserAccount = () => {
       const user = { _id, address, city, email, name, phone, pincode, type };
 
       dispatch(userData({ user, token }));
+      ToastAndroid.show(
+        `Log out Successfull!`,
+        ToastAndroid.SHORT,
+        ToastAndroid.BOTTOM
+      );
 
       navigation.navigate("Login");
     };
@@ -287,7 +292,7 @@ const UserAccount = () => {
     return (
       <KeyboardAwareScrollView>
         <SafeAreaView>
-          <UserNav />
+          <UserNav fromAccount />
           <View
             style={{
               justifyContent: "space-around",

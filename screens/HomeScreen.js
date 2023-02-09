@@ -25,6 +25,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 //
 import AdminDashboard from "./AdminDashboard";
 import UserServices from "../components/user/UserServices";
+import WorkerRequests from "../components/worker/WorkerRequests";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -64,14 +65,16 @@ const HomeScreen = () => {
   const adminToken = useSelector((state) => state.admin).token;
   console.log("adminToken: ", adminToken);
 
-  if (userToken !== "") {
-    return <UserServices />;
-  } else if (workerToken !== "") {
-    return <WorkerScreen />;
-  } else if (adminToken !== "") {
-    return <AdminDashboard />;
+  if (Platform.OS === "android" || Platform.OS === "ios") {
+    if (userToken !== "") {
+      return <UserServices />;
+    } else if (workerToken !== "") {
+      return <WorkerRequests />;
+    } else {
+      return <UserServices />;
+    }
   } else {
-    return <UserServices />;
+    return <AdminDashboard />;
   }
 };
 

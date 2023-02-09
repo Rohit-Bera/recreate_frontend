@@ -25,11 +25,13 @@ import loginSVG from "../images/loginSVG.png";
 const AdminDashboard = () => {
   const inputColor = "#B9F3FC";
 
-  return (
-    <div>
-      <h3>Admin Dashboard page</h3>
-    </div>
-  );
+  if (Platform.OS === "web") {
+    return (
+      <div>
+        <h3>Admin Dashboard page</h3>
+      </div>
+    );
+  }
 };
 
 export default AdminDashboard;

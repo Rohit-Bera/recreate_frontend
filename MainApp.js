@@ -20,6 +20,9 @@ import UserBookings from "./components/user/UserBookings";
 import UserRewards from "./components/user/UserRewards";
 import UserAccount from "./components/user/UserAccount";
 import WorkerRequests from "./components/worker/WorkerRequests";
+import WorkerAcceptedRequests from "./components/worker/WorkerAcceptedRequests";
+import WorkerPayment from "./components/worker/WorkerPayments";
+import WorkerAccount from "./components/worker/WorkerAccount";
 
 // screen manager ~ routes
 const Stack = createNativeStackNavigator();
@@ -33,7 +36,7 @@ const MainApp = () => {
   const adminToken = useSelector((state) => state.admin).token;
   console.log("adminToken: ", adminToken);
 
-  if (userToken !== "" || workerToken !== "" || adminToken !== "") {
+  if (userToken !== "" || workerToken !== "") {
     return (
       <NavigationContainer>
         <Stack.Navigator>
@@ -53,6 +56,12 @@ const MainApp = () => {
 
           {/* homepage of worker */}
           <Stack.Screen name="WorkerRequests" component={WorkerRequests} />
+          <Stack.Screen
+            name="WorkerAccepted"
+            component={WorkerAcceptedRequests}
+          />
+          <Stack.Screen name="WorkerPayment" component={WorkerPayment} />
+          <Stack.Screen name="WorkerAccount" component={WorkerAccount} />
 
           {/* admin home page */}
           <Stack.Screen name="theOwnerAdmin" component={AdminDashboard} />
@@ -65,7 +74,6 @@ const MainApp = () => {
         <Stack.Navigator>
           <Stack.Screen name="Onboard" component={OnboardScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
-
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="Forgotpassword" component={ForgotScreen} />
@@ -77,6 +85,15 @@ const MainApp = () => {
           <Stack.Screen name="UserRewards" component={UserRewards} />
           <Stack.Screen name="UserAccount" component={UserAccount} />
           <Stack.Screen name="WorkerSignup" component={WorkerSignupScreen} />
+
+          {/* homepage of worker */}
+          <Stack.Screen name="WorkerRequests" component={WorkerRequests} />
+          <Stack.Screen
+            name="WorkerAccepted"
+            component={WorkerAcceptedRequests}
+          />
+          <Stack.Screen name="WorkerPayment" component={WorkerPayment} />
+          <Stack.Screen name="WorkerAccount" component={WorkerAccount} />
 
           {/* admin home page */}
           <Stack.Screen name="theOwnerAdmin" component={AdminDashboard} />

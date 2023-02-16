@@ -249,7 +249,11 @@ const LoginScreen = ({ history }) => {
             />
             <Text>Password</Text>
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
             >
               <TextInput
                 secureTextEntry={showPwd}

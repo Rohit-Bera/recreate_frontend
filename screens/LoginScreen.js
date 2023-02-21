@@ -137,6 +137,8 @@ const LoginScreen = ({ history }) => {
         );
         setLoader(false);
       }
+
+      setLogUser({ email: "", password: "" });
     }
   };
 
@@ -245,6 +247,7 @@ const LoginScreen = ({ history }) => {
                 fontWeight: "700",
                 padding: 10,
               }}
+              value={logUser.email}
               onChangeText={(text) => setFields(text, "email")}
             />
             <Text>Password</Text>
@@ -267,6 +270,7 @@ const LoginScreen = ({ history }) => {
                   padding: 10,
                   width: 300,
                 }}
+                value={logUser.password}
                 onChangeText={(text) => setFields(text, "password")}
               />
               <TouchableOpacity

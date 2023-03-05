@@ -72,3 +72,5 @@ export const workerSignupServices = async (data) => {
     return { error };
   }
 };
+
+export const getServicesApi = async () => {};

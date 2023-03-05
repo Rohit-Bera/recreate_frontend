@@ -64,8 +64,23 @@ const UserBookings = () => {
   if (userToken !== "") {
     return (
       <SafeAreaView>
+        <View
+          style={{
+            backgroundColor: "#B9F3FC",
+            padding: 25,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 25,
+              color: "black",
+              fontWeight: "500",
+            }}
+          >
+            Bookings
+          </Text>
+        </View>
         <View>
-          <UserNav fromBookings />
           <Text>User bookings with nav</Text>
         </View>
       </SafeAreaView>
@@ -73,8 +88,22 @@ const UserBookings = () => {
   } else {
     return (
       <SafeAreaView>
-        <UserNav fromBookings />
-
+        <View
+          style={{
+            backgroundColor: "#B9F3FC",
+            padding: 25,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 25,
+              color: "black",
+              fontWeight: "500",
+            }}
+          >
+            Bookings
+          </Text>
+        </View>
         <View
           style={{
             height: "80%",

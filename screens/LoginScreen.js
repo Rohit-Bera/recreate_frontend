@@ -117,10 +117,10 @@ const LoginScreen = ({ history }) => {
 
         if (user.type === "user") {
           dispatch(userData({ user, token }));
-          navigation.navigate("UserServices");
+          navigation.navigate("UserNav");
         } else if (user.type === "worker") {
           dispatch(workerData({ user, token }));
-          navigation.navigate("WorkerRequests");
+          navigation.navigate("WorkerNav");
         } else if (user.type === "admin") {
           console.log("user.type: ", user.type);
           dispatch(adminData({ user, token }));

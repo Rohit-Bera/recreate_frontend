@@ -64,8 +64,23 @@ const UserRewards = () => {
   if (userToken !== "") {
     return (
       <SafeAreaView>
+        <View
+          style={{
+            backgroundColor: "#B9F3FC",
+            padding: 25,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 25,
+              color: "black",
+              fontWeight: "500",
+            }}
+          >
+            Rewards
+          </Text>
+        </View>
         <View>
-          <UserNav fromRewards />
           <Text>User rewards with nav</Text>
         </View>
       </SafeAreaView>
@@ -73,7 +88,22 @@ const UserRewards = () => {
   } else {
     return (
       <SafeAreaView>
-        <UserNav fromRewards />
+        <View
+          style={{
+            backgroundColor: "#B9F3FC",
+            padding: 25,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 25,
+              color: "black",
+              fontWeight: "500",
+            }}
+          >
+            Rewards
+          </Text>
+        </View>
 
         <View
           style={{

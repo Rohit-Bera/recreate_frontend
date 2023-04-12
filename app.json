@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/REcREATE.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "io.expo.recreate"
     },
     "web": {
       "favicon": "./assets/REcREATE.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "5bd165a3-6ec3-4342-8be4-d5617e632e55"
+      }
     }
   }
 }

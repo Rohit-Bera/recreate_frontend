@@ -5,7 +5,6 @@ import {
 } from "@reduxjs/toolkit";
 import userReducer from "./services/UserData.reducer";
 import workerReducer from "./services/WorkerData.reducer";
-import adminReducer from "./services/AdminData.reducer";
 // import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -18,7 +17,6 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer,
   worker: workerReducer,
-  admin: adminReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

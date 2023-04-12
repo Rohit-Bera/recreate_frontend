@@ -33,6 +33,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import WorkerNav from "./WorkerNav";
 import { workerData } from "../../services/WorkerData.reducer";
 import { useDispatch } from "react-redux";
+import Logo from "../../assets/REcREATE.png";
 
 // basically fro tab
 
@@ -125,7 +126,21 @@ const WorkerAccount = () => {
   return (
     <KeyboardAwareScrollView>
       <SafeAreaView>
-        <WorkerNav fromAccount />
+        <View
+          style={{
+            backgroundColor: "#B9F3FC",
+            padding: 5,
+          }}
+        >
+          <Image
+            source={Logo}
+            style={{
+              height: 90,
+              width: 115,
+              marginLeft: 20,
+            }}
+          />
+        </View>
         {/* main container */}
         <View style={{ margin: 13, marginTop: 25 }}>
           <View

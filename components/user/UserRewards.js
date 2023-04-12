@@ -77,11 +77,11 @@ const UserRewards = () => {
               fontWeight: "500",
             }}
           >
-            Rewards
+            Payments
           </Text>
         </View>
         <View>
-          <Text>User rewards with nav</Text>
+          <Text>User Payments with nav</Text>
         </View>
       </SafeAreaView>
     );
@@ -101,7 +101,7 @@ const UserRewards = () => {
               fontWeight: "500",
             }}
           >
-            Rewards
+            Payments
           </Text>
         </View>
 
@@ -119,7 +119,7 @@ const UserRewards = () => {
               alignItems: "center",
             }}
           >
-            <Text>No coupons found!</Text>
+            <Text>No Order found!</Text>
             <Text>Please login!</Text>
           </View>
         </View>

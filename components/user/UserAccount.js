@@ -71,7 +71,6 @@ const UserAccount = () => {
     });
   }, []);
 
-
   const logOut = () => {
     const onClickOk = () => {
       const token = "";
@@ -112,7 +111,9 @@ const UserAccount = () => {
   const userToken = useSelector((state) => state.user).token;
   console.log("userToken: ", userToken);
   const name = useSelector((state) => state.user).name;
+  console.log("name: ", name);
   const phone = useSelector((state) => state.user).phone;
+  console.log("phone: ", phone);
   const address = useSelector((state) => state.user).address;
   const city = useSelector((state) => state.user).city;
   const pincode = useSelector((state) => state.user).pincode;
@@ -272,6 +273,11 @@ const UserAccount = () => {
                     shadowColor: "black",
                     elevation: 10,
                   }}
+                  onPress={() =>
+                    navigation.navigate("FunctionalPage", {
+                      pageName: "Terms and Conditions",
+                    })
+                  }
                 >
                   <Text style={{ fontSize: 16, color: "black" }}>
                     Terms & Conditions
@@ -290,6 +296,11 @@ const UserAccount = () => {
                     shadowColor: "black",
                     elevation: 10,
                   }}
+                  onPress={() =>
+                    navigation.navigate("FunctionalPage", {
+                      pageName: "Customer Support",
+                    })
+                  }
                 >
                   <Text style={{ fontSize: 16, color: "black" }}>
                     Customer support
@@ -311,6 +322,11 @@ const UserAccount = () => {
                   shadowColor: "black",
                   elevation: 15,
                 }}
+                onPress={() =>
+                  navigation.navigate("FunctionalPage", {
+                    pageName: "About",
+                  })
+                }
               >
                 <InformationCircleIcon color={"white"} size={33} />
                 <Text style={{ fontSize: 16, color: "black" }}>About</Text>
@@ -327,6 +343,11 @@ const UserAccount = () => {
                   shadowColor: "black",
                   elevation: 15,
                 }}
+                onPress={() =>
+                  navigation.navigate("FunctionalPage", {
+                    pageName: "User orders",
+                  })
+                }
               >
                 <ClipboardDocumentListIcon color={"white"} size={33} />
                 <Text style={{ fontSize: 16, color: "black" }}>My Orders</Text>
@@ -342,6 +363,11 @@ const UserAccount = () => {
                   shadowColor: "black",
                   elevation: 15,
                 }}
+                onPress={() =>
+                  navigation.navigate("FunctionalPage", {
+                    pageName: "User payments",
+                  })
+                }
               >
                 <CreditCardIcon color={"white"} size={33} />
                 <Text style={{ fontSize: 16, color: "black" }}>
@@ -360,6 +386,11 @@ const UserAccount = () => {
                   shadowColor: "black",
                   elevation: 15,
                 }}
+                onPress={() =>
+                  navigation.navigate("FunctionalPage", {
+                    pageName: "Privacy Policy",
+                  })
+                }
               >
                 <QueueListIcon color={"white"} size={33} />
                 <Text style={{ fontSize: 16, color: "black" }}>
@@ -412,6 +443,11 @@ const UserAccount = () => {
                 borderRadius: 8,
                 // padding: 15,
               }}
+              onPress={() =>
+                navigation.navigate("FunctionalPage", {
+                  pageName: "About",
+                })
+              }
             >
               <InformationCircleIcon color={"white"} size={33} />
               <Text
@@ -436,6 +472,11 @@ const UserAccount = () => {
                 borderRadius: 8,
                 // padding: 15,
               }}
+              onPress={() =>
+                navigation.navigate("FunctionalPage", {
+                  pageName: "Terms and Conditions",
+                })
+              }
             >
               <NewspaperIcon color={"white"} size={33} />
               <Text
@@ -460,6 +501,11 @@ const UserAccount = () => {
                 borderRadius: 8,
                 // padding: 15,
               }}
+              onPress={() =>
+                navigation.navigate("FunctionalPage", {
+                  pageName: "Customer Support",
+                })
+              }
             >
               <ChatBubbleLeftRightIcon color={"white"} size={33} />
               <Text
@@ -484,6 +530,11 @@ const UserAccount = () => {
                 borderRadius: 8,
                 // padding: 15,
               }}
+              onPress={() =>
+                navigation.navigate("FunctionalPage", {
+                  pageName: "Privacy Policy",
+                })
+              }
             >
               <QueueListIcon color={"white"} size={33} />
               <Text

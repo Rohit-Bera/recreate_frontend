@@ -67,70 +67,68 @@ const OnboardScreen = () => {
     },
   ];
 
-  if (!showHomePage) {
-    return (
-      <AppIntroSlider
-        data={slides}
-        style={{
-          backgroundColor: "#B9F3FC",
-        }}
-        renderItem={({ item }) => {
-          return (
-            <>
-              <View
+  return (
+    <AppIntroSlider
+      data={slides}
+      style={{
+        backgroundColor: "#B9F3FC",
+      }}
+      renderItem={({ item }) => {
+        return (
+          <>
+            <View
+              style={{
+                flex: 1,
+                alignItems: "center",
+                padding: 20,
+                paddingTop: 200,
+              }}
+            >
+              <Image
+                source={item.image}
                 style={{
-                  flex: 1,
-                  alignItems: "center",
-                  padding: 20,
-                  paddingTop: 200,
+                  width: 400,
+                  height: 280,
+                }}
+              />
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 20,
+                  // backgroundColor: "white",
+                  marginTop: 30,
                 }}
               >
-                <Image
-                  source={item.image}
-                  style={{
-                    width: 400,
-                    height: 280,
-                  }}
-                />
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 20,
-                    // backgroundColor: "white",
-                    marginTop: 30,
-                  }}
-                >
-                  {item.title}
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    // backgroundColor: "white",
-                    marginTop: 30,
-                    width: 250,
-                    textAlign: "center",
-                  }}
-                >
-                  {item.description}
-                </Text>
-              </View>
-            </>
-          );
-        }}
-        activeDotStyle={{
-          backgroundColor: "white",
-          width: 23,
-          height: 8,
-        }}
-        renderNextButton={() => buttonLabel("Next")}
-        showSkipButton
-        renderSkipButton={() => buttonLabel("Skip")}
-        renderDoneButton={() => buttonLabel("Get Started")}
-        onDone={() => navigation.navigate("Login")}
-        onSkip={() => navigation.navigate("UserNav")}
-      />
-    );
-  }
+                {item.title}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                  // backgroundColor: "white",
+                  marginTop: 30,
+                  width: 250,
+                  textAlign: "center",
+                }}
+              >
+                {item.description}
+              </Text>
+            </View>
+          </>
+        );
+      }}
+      activeDotStyle={{
+        backgroundColor: "white",
+        width: 23,
+        height: 8,
+      }}
+      renderNextButton={() => buttonLabel("Next")}
+      showSkipButton
+      renderSkipButton={() => buttonLabel("Skip")}
+      renderDoneButton={() => buttonLabel("Get Started")}
+      onDone={() => navigation.navigate("Login")}
+      onSkip={() => navigation.navigate("UserNav")}
+    />
+  );
 };
 
 export default OnboardScreen;

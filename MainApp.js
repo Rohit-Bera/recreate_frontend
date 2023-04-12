@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { BackHandler, StyleSheet, Text, View } from "react-native";
+import { Alert } from "react-native";
 // navigation center for android
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -15,6 +16,7 @@ import {
   WalletIcon,
   UserIcon,
   MagnifyingGlassIcon,
+  CreditCardIcon,
 } from "react-native-heroicons/solid";
 import {
   WrenchScrewdriverIcon as ServiceIcon,
@@ -25,16 +27,15 @@ import {
   ClipboardDocumentListIcon as AcceptedRequestIcon,
   WalletIcon as PaymentIcon,
   UserIcon as WorkerIcon,
+  CreditCardIcon as Payment,
 } from "react-native-heroicons/outline";
 
 // screens
-import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import SignupScreen from "./screens/SignupScreen";
 
 import OnboardScreen from "./screens/OnboardScreen";
 import ForgotScreen from "./screens/ForgotpassScreen";
-import AdminDashboard from "./screens/AdminDashboard";
 import UserSignupScreen from "./screens/UserSignupScreen";
 import WorkerSignupScreen from "./screens/WorkerSignupScreen";
 import UserServices from "./components/user/UserServices";
@@ -46,6 +47,10 @@ import WorkerRequests from "./components/worker/WorkerRequests";
 import WorkerAcceptedRequests from "./components/worker/WorkerAcceptedRequests";
 import WorkerPayment from "./components/worker/WorkerPayments";
 import WorkerAccount from "./components/worker/WorkerAccount";
+import ServiceCategory from "./components/user/ServiceCategory";
+import ClickedService from "./components/user/ClickedService";
+import FunctionalPage from "./components/user/FunctionalPage";
+import { useLayoutEffect } from "react";
 
 // screen manager ~ routes
 const Stack = createNativeStackNavigator();
@@ -56,6 +61,29 @@ const UserHome = () => {
   // bookings
   // coupons
   // account
+
+  useLayoutEffect(() => {
+    const backAction = () => {
+      Alert.alert("Exit App", "Exiting the application", [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => BackHandler.exitApp(),
+        },
+      ]);
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+  });
+
   return (
     <Tab.Navigator
       initialRouteName="UserServices"
@@ -176,12 +204,12 @@ const UserHome = () => {
                 style={{ justifyContent: "space-around", alignItems: "center" }}
               >
                 {focused ? (
-                  <GiftIcon size={30} color={focused ? "#30E3DF" : "#748c94"} />
-                ) : (
-                  <RewardsIcon
+                  <CreditCardIcon
                     size={30}
                     color={focused ? "#30E3DF" : "#748c94"}
                   />
+                ) : (
+                  <Payment size={30} color={focused ? "#30E3DF" : "#748c94"} />
                 )}
                 <Text
                   style={{
@@ -189,7 +217,7 @@ const UserHome = () => {
                     color: focused ? "#30E3DF" : "#748c94",
                   }}
                 >
-                  Rewards
+                  Payments
                 </Text>
               </View>
             );
@@ -392,8 +420,6 @@ const MainApp = () => {
   console.log("userToken: ", userToken);
   const workerToken = useSelector((state) => state.worker).token;
   console.log("workerToken: ", workerToken);
-  const adminToken = useSelector((state) => state.admin).token;
-  console.log("adminToken: ", adminToken);
 
   if (userToken !== "") {
     return (
@@ -404,7 +430,6 @@ const MainApp = () => {
             component={UserHome}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
           <Stack.Screen name="Onboard" component={OnboardScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
@@ -418,6 +443,21 @@ const MainApp = () => {
           <Stack.Screen name="UserBookings" component={UserBookings} />
           <Stack.Screen name="UserRewards" component={UserRewards} />
           <Stack.Screen name="UserAccount" component={UserAccount} />
+          <Stack.Screen name="ServiceCategory" component={ServiceCategory} />
+          <Stack.Screen
+            name="FunctionalPage"
+            component={FunctionalPage}
+            options={{
+              animation: "fade_from_bottom",
+            }}
+          />
+          <Stack.Screen
+            name="ClickedService"
+            component={ClickedService}
+            options={{
+              animation: "slide_from_right",
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -430,7 +470,6 @@ const MainApp = () => {
             component={WorkerHome}
             options={{ headerShown: false }}
           />
-          {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
           <Stack.Screen name="Onboard" component={OnboardScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
@@ -453,7 +492,6 @@ const MainApp = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen name="Onboard" component={OnboardScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Signup" component={SignupScreen} />
           <Stack.Screen name="Forgotpassword" component={ForgotScreen} />
@@ -485,9 +523,21 @@ const MainApp = () => {
           />
           <Stack.Screen name="WorkerPayment" component={WorkerPayment} />
           <Stack.Screen name="WorkerAccount" component={WorkerAccount} />
-
-          {/* admin home page */}
-          <Stack.Screen name="theOwnerAdmin" component={AdminDashboard} />
+          <Stack.Screen name="ServiceCategory" component={ServiceCategory} />
+          <Stack.Screen
+            name="FunctionalPage"
+            component={FunctionalPage}
+            options={{
+              animation: "fade_from_bottom",
+            }}
+          />
+          <Stack.Screen
+            name="ClickedService"
+            component={ClickedService}
+            options={{
+              animation: "slide_from_right",
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     );

@@ -31,6 +31,7 @@ import {
   getAllServicesApi,
   bookService,
 } from "../../services/Oneforall";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const ServiceCategory = ({ route }) => {
   const [loader, setLoader] = useState(false); // loader state
@@ -51,6 +52,16 @@ const ServiceCategory = ({ route }) => {
     "hardwareBackPress",
     backAction
   );
+
+  // -------------------------
+  // date picker
+  const minDate = new Date();
+
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -82,7 +93,7 @@ const ServiceCategory = ({ route }) => {
     const { error, isFoundService } = result;
     // console.log("isFoundService: ", isFoundService);
 
-    result ? setLoader(false) : "";
+    result ? setLoader(false) : setLoader(false);
 
     isFoundService ? setCategory(isFoundService) : setCategory([]);
 
@@ -111,34 +122,71 @@ const ServiceCategory = ({ route }) => {
     }
   };
 
-  const bookClickedService = async () => {
-    setBookLoader(true);
-    if (userToken !== "") {
-      const headers = { headers: { Authorization: `Bearer ${userToken}` } };
-      const result = await bookService({ headers, request, serviceName });
-      const { newBookedService, error } = result;
-      if (error) {
-        ToastAndroid.show(
-          `${error.message}`,
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        );
-      }
-      if (newBookedService) {
-        ToastAndroid.show(
-          `Service was booked successfully!`,
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        );
-      }
-      newBookedService ? setBookLoader(false) : setBookLoader(false);
-    } else {
-      ToastAndroid.show(
-        `please login first!`,
+  const bookClickedService = async (date) => {
+    if (!isNaN(request)) {
+      return ToastAndroid.show(
+        `Text only!`,
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM
       );
     }
+
+    const onClickOk = async () => {
+      setBookLoader(true);
+
+      if (userToken !== "") {
+        const bDate = date.setDate(date.getDate() + 1);
+        console.log("bDate: ", new Date(bDate));
+        const bookedDate = new Date(bDate);
+
+        const headers = { headers: { Authorization: `Bearer ${userToken}` } };
+        const result = await bookService({
+          headers,
+          request,
+          serviceName,
+          bookedDate,
+        });
+        const { newBookedService, error } = result;
+        if (error) {
+          ToastAndroid.show(
+            `${error.message}`,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+        if (newBookedService) {
+          ToastAndroid.show(
+            `Service was booked successfully!`,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+        newBookedService ? setBookLoader(false) : setBookLoader(false);
+        newBookedService ? setRequest("") : setRequest("");
+      } else {
+        ToastAndroid.show(
+          `please login first!`,
+          ToastAndroid.SHORT,
+          ToastAndroid.BOTTOM
+        );
+      }
+    };
+
+    Alert.alert(
+      "Book Clicked Service",
+      "Are you sure , you want to book this Service ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => onClickOk(),
+        },
+      ]
+    );
   };
 
   return (
@@ -289,8 +337,10 @@ const ServiceCategory = ({ route }) => {
                   borderColor: "#30E3DF",
                   borderWidth: 2,
                 }}
+                value={request}
                 multiline={true}
                 onChangeText={(text) => setRequest(text)}
+                keyboardType="ascii-capable"
               />
               <TouchableOpacity
                 style={{
@@ -303,7 +353,15 @@ const ServiceCategory = ({ route }) => {
                   borderColor: "#30E3DF",
                   borderWidth: 2,
                 }}
-                onPress={() => bookClickedService()}
+                onPress={() => {
+                  !userToken
+                    ? ToastAndroid.show(
+                        `please login first`,
+                        ToastAndroid.SHORT,
+                        ToastAndroid.BOTTOM
+                      )
+                    : setDatePickerVisibility(true);
+                }}
               >
                 {bookLoader ? (
                   <ActivityIndicator size={30} color={"#30E3DF"} />
@@ -314,11 +372,22 @@ const ServiceCategory = ({ route }) => {
             </View>
           </View>
 
+          {/*----------------------------------------------------------------------- date modal */}
+          <DateTimePickerModal
+            isVisible={isDatePickerVisible}
+            mode="date"
+            onConfirm={(date) => {
+              bookClickedService(date);
+              hideDatePicker();
+            }}
+            onCancel={hideDatePicker}
+            minimumDate={minDate}
+          />
+
+          {/* other services */}
           <Text style={{ fontSize: 18, marginLeft: 15 }}>
             Other Services...
           </Text>
-
-          {/* other services */}
           <View style={{ marginTop: 20, marginBottom: 120 }}>
             {newService.map((item, index) => {
               // console.log("image link: ", item.launchedServiceImage[0]);

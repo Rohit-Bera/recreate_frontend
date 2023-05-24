@@ -32,12 +32,12 @@ import Logo from "../assets/REcREATE.png";
 import loginSVG from "../images/loginSVG.png";
 import { workerData } from "../services/WorkerData.reducer";
 
-const LoginScreen = ({ history }) => {
+const LoginScreen = () => {
   const [logUser, setLogUser] = useState({
     email: "",
     password: "",
   });
-  const [onLoad, setLoader] = useState(false);
+  const [onLoad, setLoginLoader] = useState(false);
   const [showPwd, setShowPwd] = useState(true);
   const dispatch = useDispatch();
 
@@ -46,6 +46,7 @@ const LoginScreen = ({ history }) => {
   const inputColor = "#B9F3FC";
 
   useEffect(() => {
+    setLoginLoader(false);
     const backAction = () => {
       Alert.alert("Exit App", "Exiting the application", [
         {
@@ -81,7 +82,6 @@ const LoginScreen = ({ history }) => {
   };
 
   const signIn = async () => {
-    setLoader(true);
     if (logUser.email === "" || logUser.password === "") {
       console.log("logUser: ", logUser);
       ToastAndroid.show(
@@ -89,12 +89,14 @@ const LoginScreen = ({ history }) => {
         ToastAndroid.SHORT,
         ToastAndroid.BOTTOM
       );
-
-      setLoader(false);
     } else {
+      setLoginLoader(true);
+
       const reply = await loginServices(logUser);
 
       const { response, error } = reply;
+
+      response ? setLoginLoader(false) : setLoginLoader(false);
 
       if (response) {
         const { token, user } = response;
@@ -102,7 +104,6 @@ const LoginScreen = ({ history }) => {
 
         console.log("response: ", response);
 
-        setLoader(false);
         setLogUser({
           email: "",
           password: "",
@@ -121,8 +122,6 @@ const LoginScreen = ({ history }) => {
           dispatch(workerData({ user, token }));
           navigation.navigate("WorkerNav");
         }
-
-        // navigation.navigate("Home");
       } else if (error) {
         console.log("error consoled: ", error);
         ToastAndroid.show(
@@ -130,7 +129,6 @@ const LoginScreen = ({ history }) => {
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
-        setLoader(false);
       }
 
       setLogUser({ email: "", password: "" });

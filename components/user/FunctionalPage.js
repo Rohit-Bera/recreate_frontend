@@ -20,12 +20,22 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, StackActions } from "@react-navigation/native";
-import { AtSymbolIcon, PencilSquareIcon } from "react-native-heroicons/solid";
+import {
+  AtSymbolIcon,
+  PencilSquareIcon,
+  PhoneArrowUpRightIcon,
+} from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useSelector } from "react-redux";
 import Logo from "../../assets/REcREATE.png";
-import { MicrophoneIcon } from "react-native-heroicons/outline";
+import {
+  MicrophoneIcon,
+  TrashIcon,
+  UserIcon,
+  XMarkIcon,
+} from "react-native-heroicons/outline";
+import { getAllUsersOrder } from "../../services/Oneforall";
 
 const FunctionalPage = ({ route }) => {
   const navigation = useNavigation();
@@ -318,61 +328,135 @@ const FunctionalPage = ({ route }) => {
       </>
     );
   }
-
   if (pageName === "Customer Support") {
     return (
-      <>
+      <View style={{ marginBottom: 100 }}>
         <View style={{ justifyContent: "space-around", alignItems: "center" }}>
           <View
             style={{
               backgroundColor: "white",
-              marginTop: 30,
-              marginBottom: 30,
+              height: 250,
+              width: 330,
+              padding: 20,
+              marginTop: 20,
+              marginBottom: 20,
+              borderRadius: 5,
+              shadowColor: "#748c94",
+              elevation: 20,
               justifyContent: "space-around",
               alignItems: "center",
-              width: 330,
-              height: 280,
-              borderRadius: 5,
-              shadowColor: "black",
-              elevation: 15,
             }}
           >
-            <MicrophoneIcon size={40} color={"#B9F3FC"} />
-            <Text style={{ fontSize: 20 }}>Add your complaint:</Text>
+            <Text style={{ fontSize: 18, textAlign: "center" }}>
+              Tell something you liked about our app {">>>"}
+            </Text>
             <TextInput
-              style={{
-                fontSize: 17,
-                backgroundColor: "white",
-                width: 250,
-                minHeight: 50,
-                maxHeight: 100,
-                borderRadius: 5,
-                padding: 10,
-                borderColor: "#30E3DF",
-                borderWidth: 2,
-              }}
               multiline={true}
+              style={{
+                backgroundColor: "#30E3DF",
+                width: 230,
+                height: 80,
+                borderRadius: 5,
+                color: "white",
+                fontSize: 17,
+                padding: 10,
+                fontWeight: "600",
+              }}
             />
             <TouchableOpacity
               style={{
-                backgroundColor: "white",
-                marginBottom: 13,
                 height: 40,
-                width: 150,
-                alignItems: "center",
+                width: 120,
                 justifyContent: "space-around",
-                borderRadius: 5,
-                borderColor: "#30E3DF",
-                borderWidth: 2,
+                alignItems: "center",
+                borderBottomColor: "#30E3DF",
+                borderBottomWidth: 2,
+                // backgroundColor: "green",
               }}
+              onPress={() =>
+                ToastAndroid.show(
+                  `please login first`,
+                  ToastAndroid.SHORT,
+                  ToastAndroid.BOTTOM
+                )
+              }
             >
-              <Text style={{ fontWeight: "500" }}>submit complaint</Text>
+              <Text
+                style={{
+                  fontSize: 19,
+                  fontWeight: "500",
+                  color: "#30E3DF",
+                }}
+              >
+                Submit!
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        <ScrollView>{/* tokens */}</ScrollView>
-      </>
+        {/* complaints */}
+        <View style={{ justifyContent: "space-around", alignItems: "center" }}>
+          <View
+            style={{
+              backgroundColor: "#30E3DF",
+              height: 250,
+              width: 330,
+              padding: 20,
+              // marginTop: 0,
+              marginBottom: 30,
+              borderRadius: 5,
+              shadowColor: "#748c94",
+              elevation: 20,
+              justifyContent: "space-around",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ fontSize: 18, textAlign: "center", color: "white" }}>
+              Faced Some problems , Tell us below {">>>"}
+            </Text>
+            <TextInput
+              multiline={true}
+              style={{
+                backgroundColor: "white",
+                width: 230,
+                height: 50,
+                borderRadius: 5,
+                color: "#30E3DF",
+                fontSize: 17,
+                padding: 10,
+                fontWeight: "600",
+              }}
+            />
+            <TouchableOpacity
+              style={{
+                height: 40,
+                width: 120,
+                justifyContent: "space-around",
+                alignItems: "center",
+                borderBottomColor: "white",
+                borderBottomWidth: 2,
+                // backgroundColor: "green",
+              }}
+              onPress={() =>
+                ToastAndroid.show(
+                  `please login first`,
+                  ToastAndroid.SHORT,
+                  ToastAndroid.BOTTOM
+                )
+              }
+            >
+              <Text
+                style={{
+                  fontSize: 19,
+                  fontWeight: "500",
+                  color: "white",
+                }}
+              >
+                List Down!
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
     );
   }
 
@@ -487,21 +571,1119 @@ const FunctionalPage = ({ route }) => {
   }
 
   if (pageName === "User orders") {
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerTitle: "My Orders",
+      });
+    }, []);
+    const navigation = useNavigation();
+
+    const [allOrders, setAllOrders] = useState([]);
+
+    const [refresh, setRefresh] = useState(false); // pull-down-refresh
+    const [loader, setLoader] = useState(false); // loader state
+
+    const [modalState, setModalState] = useState(false);
+    const [modalInfo, setModalInfo] = useState({
+      item: "",
+      bookedDt: "",
+      visitDt: "",
+      compare: "",
+    });
+
+    useEffect(() => {
+      getAllOrders();
+    }, []);
+
+    const userToken = useSelector((state) => state.user).token;
+    console.log("userToken: ", userToken);
+
+    const getAllOrders = async () => {
+      setLoader(true);
+      const headers = { headers: { Authorization: `Bearer ${userToken}` } };
+
+      const response = await getAllUsersOrder({ headers });
+
+      const { orders, error } = response;
+
+      if (orders) {
+        setLoader(false);
+        setAllOrders(orders);
+      }
+
+      if (error) {
+        setLoader(false);
+        ToastAndroid.show(`${error}`, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      }
+
+      console.log("error: ", error);
+      console.log("userOrders: ", orders);
+    };
+
     return (
       <>
-        <View>
-          <Text>USer orders</Text>
-        </View>
+        <KeyboardAwareScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => getAllOrders()}
+            />
+          }
+        >
+          {/* container */}
+          {loader ? (
+            <Modal
+              transparent={true}
+              style={{ justifyContent: "space-around", alignItems: "center" }}
+            >
+              <View
+                style={{
+                  backgroundColor: "#FFFFFFaa",
+                  flex: 1,
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#B9F3FC",
+                    height: 70,
+                    width: 70,
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    borderRadius: 5,
+                    borderColor: "#30E3DF",
+                    borderWidth: 2,
+                  }}
+                >
+                  <ActivityIndicator size={30} color={"white"} />
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            <View style={{ margin: 15 }}>
+              {allOrders.length !== 0 ? (
+                allOrders.map((item, index) => {
+                  console.log("item all orders: ", item);
+                  console.log("_---------------------------------------------");
+
+                  if (item.orderStatus !== "done") {
+                    if (item.service) {
+                      const date = new Date(item.bookedDate);
+
+                      const dd = date.getDate();
+                      const mm = date.getMonth();
+                      const yyyy = date.getFullYear();
+
+                      const booked = dd + "-" + mm + "-" + yyyy;
+
+                      const vdate = new Date(item.visitDate);
+                      const vdd = vdate.getDate();
+                      const vmm = vdate.getMonth();
+                      const vyyyy = vdate.getFullYear();
+
+                      const visit = vdd + "-" + vmm + "-" + vyyyy;
+                      // console.log("item.service: ", item.service);
+
+                      const current = new Date();
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            backgroundColor: "#30E3DF",
+                            marginTop: 10,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            height: 80,
+                            shadowColor: "black",
+                            elevation: 10,
+                          }}
+                        >
+                          <Image
+                            source={{
+                              uri: item.service.launchedService
+                                .launchedServiceImage[0],
+                            }}
+                            style={{ height: 60, width: 60 }}
+                          />
+                          <View
+                            style={{
+                              // backgroundColor: "white",
+                              width: 180,
+                              margin: 5,
+                              minHeight: 70,
+                              maxHeight: "auto",
+                              alignItems: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                textTransform: "capitalize",
+                                fontSize: 15,
+                              }}
+                            >
+                              {item.service.launchedService.launchedServiceName}
+                            </Text>
+                            <Text
+                              style={{
+                                paddingTop: 4,
+                                color: "white",
+                                fontWeight: "500",
+                              }}
+                            >
+                              Booked dt . {booked}
+                            </Text>
+                            {item.orderStatus == "accepted" ? (
+                              current > vdate ? (
+                                <Text>Worker will visit soon!</Text>
+                              ) : (
+                                <Text> Visit dt . {visit} </Text>
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </View>
+                          <TouchableOpacity
+                            style={{
+                              backgroundColor: "white",
+                              height: 40,
+                              width: 60,
+                              borderRadius: 3,
+                              justifyContent: "space-around",
+                              alignItems: "center",
+                            }}
+                            onPress={() => {
+                              setModalState(true),
+                                setModalInfo({
+                                  item: item,
+                                  bookedDt: booked,
+                                  visitDt: visit,
+                                  compare: vdate,
+                                });
+                            }}
+                          >
+                            <Text style={{ fontSize: 16 }}>view</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    } else if (item.request) {
+                      // booked date
+                      const date = new Date(item.bookedDate);
+                      const dd = date.getDate();
+                      const mm = date.getMonth();
+                      const yyyy = date.getFullYear();
+                      const booked = dd + "-" + mm + "-" + yyyy;
+
+                      // visit date
+                      const vdate = new Date(item.visitDate);
+                      console.log("vdate: ", vdate);
+                      const vdd = vdate.getDate();
+                      const vmm = vdate.getMonth();
+                      const vyyyy = vdate.getFullYear();
+                      const visit = vdd + "-" + vmm + "-" + vyyyy;
+
+                      // curent date
+                      const current = new Date();
+
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            backgroundColor: "#30E3DF",
+                            marginTop: 10,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            minHeight: 70,
+                            maxHeight: "auto",
+                            shadowColor: "black",
+                            elevation: 10,
+                          }}
+                        >
+                          <Image
+                            source={Logo}
+                            style={{
+                              height: 60,
+                              width: 60,
+                              backgroundColor: "white",
+                              borderRadius: 3,
+                            }}
+                          />
+                          <View
+                            style={{
+                              // backgroundColor: "white",
+                              width: 180,
+                              margin: 5,
+                              minHeight: 70,
+                              maxHeight: "auto",
+                              alignItems: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                textTransform: "capitalize",
+                                fontSize: 15,
+                              }}
+                            >
+                              {item.request}
+                            </Text>
+                            <Text
+                              style={{
+                                paddingTop: 4,
+                                color: "white",
+                                fontWeight: "500",
+                              }}
+                            >
+                              {" "}
+                              Booked dt . {booked}
+                            </Text>
+                            {item.orderStatus == "accepted" ? (
+                              current > vdate ? (
+                                <Text>Worker will visit soon!</Text>
+                              ) : (
+                                <Text> Visit dt . {visit} </Text>
+                              )
+                            ) : (
+                              ""
+                            )}
+                          </View>
+                          <TouchableOpacity
+                            style={{
+                              backgroundColor: "white",
+                              height: 40,
+                              width: 60,
+                              borderRadius: 3,
+                              justifyContent: "space-around",
+                              alignItems: "center",
+                            }}
+                            onPress={() => {
+                              setModalState(true),
+                                setModalInfo({
+                                  item: item,
+                                  bookedDt: booked,
+                                  visitDt: visit,
+                                  compare: vdate,
+                                });
+                            }}
+                          >
+                            <Text style={{ fontSize: 16 }}>view</Text>
+                          </TouchableOpacity>
+                        </View>
+                      );
+                    }
+                  }
+                })
+              ) : (
+                <View
+                  style={{
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    marginTop: 40,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "grey",
+                      fontSize: 17,
+                      fontWeight: "500",
+                    }}
+                  >
+                    No Services booked Yet!
+                  </Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* modal info */}
+          {modalState == true ? (
+            <Modal
+              transparent={true}
+              style={{ justifyContent: "space-around", alignItems: "center" }}
+            >
+              <View
+                style={{
+                  backgroundColor: "#FFFFFFaa",
+                  flex: 1,
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#B9F3FC",
+                    height: 620,
+                    width: 330,
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    flexDirection: "column",
+                    borderRadius: 5,
+                    borderColor: "#30E3DF",
+                    borderWidth: 2,
+                    padding: 8,
+                  }}
+                >
+                  <View
+                    style={{
+                      // backgroundColor: "green",
+                      width: 300,
+                      alignItems: "flex-end",
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={{
+                        backgroundColor: "white",
+                        height: 40,
+                        width: 40,
+                        justifyContent: "space-around",
+                        alignItems: "center",
+                      }}
+                      onPress={() => {
+                        setModalState(false);
+                      }}
+                    >
+                      <XMarkIcon color={"#30E3DF"} size={30} />
+                    </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      //
+                      height: 540,
+                      width: 300,
+                    }}
+                  >
+                    <ScrollView style={{ marginBottom: 10 }}>
+                      {console.log("Model info :", modalInfo)}
+
+                      {modalInfo.item.request ? (
+                        <View
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <View
+                            style={{
+                              justifyContent: "space-around",
+                              alignItems: "center",
+                            }}
+                          >
+                            <Image
+                              source={Logo}
+                              style={{
+                                height: 200,
+                                width: 200,
+                                backgroundColor: "white",
+                              }}
+                            />
+                            <Text style={{ marginTop: 40, fontSize: 16 }}>
+                              Personal Request
+                            </Text>
+                          </View>
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            Requested for . "{modalInfo.item.request}"
+                          </Text>
+                          <Text style={{ fontSize: 16 }}>
+                            Booked dt . {modalInfo.bookedDt}
+                          </Text>
+                          {modalInfo.item.orderStatus === "pending" ? (
+                            <>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                }}
+                              >
+                                ------------
+                              </Text>
+                              <Text style={{ fontSize: 16 }}>
+                                Your service is pending{" "}
+                              </Text>
+                              <Text style={{ fontSize: 16 }}>
+                                to be accepted by worker!
+                              </Text>
+                            </>
+                          ) : (
+                            <>
+                              <Text
+                                style={{
+                                  fontSize: 16,
+                                }}
+                              >
+                                ------------
+                              </Text>
+
+                              {new Date() > modalInfo.compare ? (
+                                <Text>Service provider will visit Soon!</Text>
+                              ) : (
+                                <Text>
+                                  Service provider will visit in{" "}
+                                  {modalInfo.visitDt}
+                                </Text>
+                              )}
+                            </>
+                          )}
+
+                          {modalInfo.item.orderStatus !== "pending" ? (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                                marginTop: 20,
+                                backgroundColor: "white",
+                                minWidth: 250,
+                                maxWidth: 300,
+
+                                height: 130,
+                                borderRadius: 3,
+                              }}
+                            >
+                              {/* worker */}
+                              <View
+                                style={{
+                                  justifyContent: "space-around",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <UserIcon size={50} color={"black"} />
+                                <Text
+                                  style={{
+                                    minWidth: 50,
+                                    marginLeft: 5,
+                                    marginRight: 5,
+                                  }}
+                                >
+                                  {modalInfo.item.worker.profession
+                                    ? modalInfo.item.worker.profession
+                                    : "profession"}
+                                </Text>
+                              </View>
+                              {/* line */}
+                              <View
+                                style={{
+                                  backgroundColor: "black",
+                                  minHeight: 90,
+                                  maxHeight: 180,
+                                  width: 3,
+                                }}
+                              ></View>
+                              {/* worker info */}
+                              <View
+                                style={{
+                                  padding: 10,
+                                  justifyContent: "space-around",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Text>
+                                  {modalInfo.item.worker.name
+                                    ? modalInfo.item.worker.name
+                                    : "worker name"}
+                                </Text>
+
+                                <TouchableOpacity
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-around",
+                                    alignItems: "center",
+                                    backgroundColor: "#30E3DF",
+                                    marginTop: 10,
+                                    height: 40,
+                                    width: 80,
+                                    borderRadius: 3,
+                                  }}
+                                  onPress={() => {
+                                    Linking.openURL(
+                                      `tel:${modalInfo.item.worker.phone}`
+                                    );
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      color: "white",
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    call
+                                  </Text>
+                                  <PhoneArrowUpRightIcon
+                                    size={30}
+                                    color={"white"}
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          ) : (
+                            ""
+                          )}
+                        </View>
+                      ) : (
+                        <View
+                          style={{
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                          }}
+                        >
+                          <View
+                            style={{
+                              justifyContent: "space-around",
+                              alignItems: "center",
+                              flexDirection: "row",
+                            }}
+                          >
+                            <Image
+                              source={{
+                                uri: modalInfo.item.service.launchedService
+                                  .launchedServiceImage[0],
+                              }}
+                              style={{
+                                height: 200,
+                                width: 200,
+                                backgroundColor: "white",
+                              }}
+                            />
+                          </View>
+                          <View
+                            style={{
+                              justifyContent: "space-around",
+                              alignItems: "center",
+                              // backgroundColor: "pink",
+                              minHeight: 100,
+                              maxHeight: 150,
+                              margin: 10,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 16,
+                                textTransform: "capitalize",
+                                marginTop: 40,
+                              }}
+                            >
+                              Requested for .{" "}
+                              {
+                                modalInfo.item.service.launchedService
+                                  .launchedServiceName
+                              }
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 16,
+                              }}
+                            >
+                              Booked dt . {modalInfo.bookedDt}
+                            </Text>
+                            {modalInfo.item.visitDate === null ? (
+                              <>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                  }}
+                                >
+                                  ------------
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                  }}
+                                >
+                                  Your service is pending{" "}
+                                </Text>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                  }}
+                                >
+                                  to be accepted by worker!
+                                </Text>
+                              </>
+                            ) : (
+                              <>
+                                <Text
+                                  style={{
+                                    fontSize: 16,
+                                  }}
+                                >
+                                  ------------
+                                </Text>
+                                {new Date() > modalInfo.compare ? (
+                                  <Text>Service provider will visit Soon!</Text>
+                                ) : (
+                                  <Text>
+                                    Service provider will visit in{" "}
+                                    {modalInfo.visitDt}
+                                  </Text>
+                                )}
+                              </>
+                            )}
+                          </View>
+
+                          {modalInfo.item.orderStatus !== "pending" ? (
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                                marginTop: 20,
+                                backgroundColor: "white",
+                                minWidth: 250,
+                                maxWidth: 300,
+
+                                height: 130,
+                                borderRadius: 3,
+                              }}
+                            >
+                              {/* worker */}
+                              <View
+                                style={{
+                                  justifyContent: "space-around",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <UserIcon size={50} color={"black"} />
+                                <Text
+                                  style={{
+                                    minWidth: 50,
+                                    marginLeft: 5,
+                                    marginRight: 5,
+                                  }}
+                                >
+                                  {modalInfo.item.worker.profession}
+                                </Text>
+                              </View>
+                              {/* line */}
+                              <View
+                                style={{
+                                  backgroundColor: "black",
+                                  minHeight: 90,
+                                  maxHeight: 180,
+                                  width: 3,
+                                }}
+                              ></View>
+                              {/* worker info */}
+                              <View
+                                style={{
+                                  padding: 10,
+                                  justifyContent: "space-around",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <Text>{modalInfo.item.worker.name}</Text>
+
+                                <TouchableOpacity
+                                  style={{
+                                    flexDirection: "row",
+                                    justifyContent: "space-around",
+                                    alignItems: "center",
+                                    backgroundColor: "#30E3DF",
+                                    marginTop: 10,
+                                    height: 40,
+                                    width: 80,
+                                    borderRadius: 3,
+                                  }}
+                                  onPress={() => {
+                                    Linking.openURL(
+                                      `tel:${modalInfo.item.worker.phone}`
+                                    );
+                                  }}
+                                >
+                                  <Text
+                                    style={{
+                                      color: "white",
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    call
+                                  </Text>
+                                  <PhoneArrowUpRightIcon
+                                    size={30}
+                                    color={"white"}
+                                  />
+                                </TouchableOpacity>
+                              </View>
+                            </View>
+                          ) : (
+                            ""
+                          )}
+                        </View>
+                      )}
+                    </ScrollView>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            ""
+          )}
+        </KeyboardAwareScrollView>
       </>
     );
   }
 
   if (pageName === "User payments") {
+    useLayoutEffect(() => {
+      navigation.setOptions({
+        headerTitle: "My Payments",
+      });
+    }, []);
+
+    const navigation = useNavigation();
+    const [allOrders, setAllOrders] = useState([]);
+
+    const [refresh, setRefresh] = useState(false); // pull-down-refresh
+    const [loader, setLoader] = useState(false); // loader state
+
+    useEffect(() => {
+      getAllOrders();
+    }, []);
+
+    const userToken = useSelector((state) => state.user).token;
+    console.log("userToken: ", userToken);
+
+    const getAllOrders = async () => {
+      setLoader(true);
+      const headers = { headers: { Authorization: `Bearer ${userToken}` } };
+
+      const response = await getAllUsersOrder({ headers });
+
+      const { orders, error } = response;
+
+      if (orders) {
+        setLoader(false);
+        setAllOrders(orders);
+      }
+
+      if (error) {
+        setLoader(false);
+        ToastAndroid.show(`${error}`, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
+      }
+
+      console.log("error: ", error);
+      console.log("userOrders: ", orders);
+    };
+
+    let notDone = 0;
+
     return (
       <>
-        <View>
-          <Text>USer payments</Text>
-        </View>
+        <KeyboardAwareScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={refresh}
+              onRefresh={() => getAllOrders()}
+            />
+          }
+        >
+          {/* container */}
+          {loader ? (
+            <Modal
+              transparent={true}
+              style={{ justifyContent: "space-around", alignItems: "center" }}
+            >
+              <View
+                style={{
+                  backgroundColor: "#FFFFFFaa",
+                  flex: 1,
+                  justifyContent: "space-around",
+                  alignItems: "center",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#B9F3FC",
+                    height: 70,
+                    width: 70,
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    flexDirection: "row",
+                    borderRadius: 5,
+                    borderColor: "#30E3DF",
+                    borderWidth: 2,
+                  }}
+                >
+                  <ActivityIndicator size={30} color={"white"} />
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            <View style={{ margin: 15 }}>
+              {allOrders.length !== 0 ? (
+                allOrders.map((item, index) => {
+                  console.log("item all orders: ", item);
+                  console.log("_---------------------------------------------");
+
+                  if (item.orderStatus === "done") {
+                    if (item.service) {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            backgroundColor: "white",
+                            marginTop: 10,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            height: 80,
+                            shadowColor: "black",
+                            elevation: 10,
+                          }}
+                        >
+                          <Image
+                            source={{
+                              uri: item.service.launchedService
+                                .launchedServiceImage[0],
+                            }}
+                            style={{ height: 60, width: 60 }}
+                          />
+                          <View
+                            style={{
+                              // backgroundColor: "white",
+                              width: 180,
+                              margin: 5,
+                              minHeight: 70,
+                              maxHeight: "auto",
+                              alignItems: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                textTransform: "capitalize",
+                                fontSize: 17,
+                                fontWeight: "400",
+                              }}
+                            >
+                              {item.service.launchedService.launchedServiceName}
+                            </Text>
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "grey",
+                                fontSize: 15,
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              Service . {item.orderStatus}
+                            </Text>
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "#30E3DF",
+
+                                fontSize: 15,
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              Payment . {item.paymentStatus}
+                            </Text>
+                          </View>
+                          {item.paymentStatus === "pending" ? (
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#30E3DF",
+                                height: 40,
+                                width: 60,
+                                borderRadius: 3,
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text style={{ fontSize: 16, color: "white" }}>
+                                PAY
+                              </Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#30E3DF",
+                                height: 40,
+                                width: 60,
+                                borderRadius: 3,
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text style={{ fontSize: 16, color: "white" }}>
+                                PAID
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    } else if (item.request) {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            backgroundColor: "white",
+                            marginTop: 10,
+                            marginBottom: 10,
+                            borderRadius: 5,
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            flexDirection: "row",
+                            minHeight: 70,
+                            maxHeight: "auto",
+                            shadowColor: "black",
+                            elevation: 10,
+                          }}
+                        >
+                          <Image
+                            source={Logo}
+                            style={{
+                              height: 60,
+                              width: 60,
+                              backgroundColor: "#30E3DF",
+                              borderRadius: 3,
+                            }}
+                          />
+                          <View
+                            style={{
+                              // backgroundColor: "white",
+                              width: 180,
+                              margin: 5,
+                              minHeight: 70,
+                              maxHeight: "auto",
+                              alignItems: "center",
+                              justifyContent: "space-evenly",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                textTransform: "capitalize",
+                                fontSize: 17,
+                                fontWeight: "400",
+                              }}
+                            >
+                              {item.request}
+                            </Text>
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "grey",
+                                fontSize: 15,
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              Service . {item.orderStatus}
+                            </Text>
+                            <Text
+                              style={{
+                                fontWeight: "500",
+                                color: "#30E3DF",
+                                fontSize: 15,
+                                textTransform: "capitalize",
+                              }}
+                            >
+                              Payment . {item.paymentStatus}
+                            </Text>
+                          </View>
+                          {item.paymentStatus === "pending" ? (
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#30E3DF",
+                                height: 40,
+                                width: 60,
+                                borderRadius: 3,
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text style={{ fontSize: 16, color: "white" }}>
+                                PAY
+                              </Text>
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={{
+                                backgroundColor: "#30E3DF",
+                                height: 40,
+                                width: 60,
+                                borderRadius: 3,
+                                justifyContent: "space-around",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Text style={{ fontSize: 16, color: "white" }}>
+                                PAID
+                              </Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      );
+                    }
+                  } else {
+                    notDone = notDone + 1;
+                  }
+
+                  console.log("notDone: ", notDone);
+                  console.log("allOrders.length: ", allOrders.length);
+
+                  if (allOrders.length === notDone) {
+                    console.log("notDone: ", notDone);
+                    console.log("allOrders.length: ", allOrders.length);
+
+                    return (
+                      <View
+                        style={{
+                          justifyContent: "space-around",
+                          alignItems: "center",
+                          marginTop: 40,
+                        }}
+                        key={index}
+                      >
+                        <Text
+                          style={{
+                            color: "grey",
+                            fontSize: 17,
+                            fontWeight: "500",
+                          }}
+                        >
+                          No Payments have been made yet!
+                        </Text>
+                      </View>
+                    );
+                  }
+                })
+              ) : (
+                <View
+                  style={{
+                    justifyContent: "space-around",
+                    alignItems: "center",
+                    marginTop: 40,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: "grey",
+                      fontSize: 17,
+                      fontWeight: "500",
+                    }}
+                  >
+                    No Booked servcies completed Yet!
+                  </Text>
+                </View>
+              )}
+
+              {/* no bookings */}
+            </View>
+          )}
+        </KeyboardAwareScrollView>
       </>
     );
   }

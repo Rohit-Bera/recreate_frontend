@@ -41,7 +41,7 @@ import WorkerSignupScreen from "./screens/WorkerSignupScreen";
 import UserServices from "./components/user/UserServices";
 import UserSearch from "./components/user/UserSearch";
 import UserBookings from "./components/user/UserBookings";
-import UserRewards from "./components/user/UserRewards";
+import UserPayments from "./components/user/UserPayments";
 import UserAccount from "./components/user/UserAccount";
 import WorkerRequests from "./components/worker/WorkerRequests";
 import WorkerAcceptedRequests from "./components/worker/WorkerAcceptedRequests";
@@ -51,6 +51,12 @@ import ServiceCategory from "./components/user/ServiceCategory";
 import ClickedService from "./components/user/ClickedService";
 import FunctionalPage from "./components/user/FunctionalPage";
 import { useLayoutEffect } from "react";
+import WorkerMyOrder from "./components/worker/WorkerMyOrder";
+import WorkerTNC from "./components/worker/WorkerTNC";
+import ViewMap from "./components/worker/ViewMap";
+import WorkerWallet from "./components/worker/WorkerWallet";
+import WorkerSupport from "./components/worker/WorkerSupport";
+import UserSupport from "./components/user/UserSupport";
 
 // screen manager ~ routes
 const Stack = createNativeStackNavigator();
@@ -86,7 +92,7 @@ const UserHome = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="UserServices"
+      // initialRouteName="UserServices"
       screenOptions={{
         tabBarHideOnKeyboard: true,
         headerShown: false,
@@ -196,7 +202,7 @@ const UserHome = () => {
       />
       <Tab.Screen
         name="Coupons"
-        component={UserRewards}
+        component={UserPayments}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
@@ -441,7 +447,7 @@ const MainApp = () => {
           <Stack.Screen name="UserServices" component={UserServices} />
           <Stack.Screen name="UserSearch" component={UserSearch} />
           <Stack.Screen name="UserBookings" component={UserBookings} />
-          <Stack.Screen name="UserRewards" component={UserRewards} />
+          <Stack.Screen name="UserPayments" component={UserPayments} />
           <Stack.Screen name="UserAccount" component={UserAccount} />
           <Stack.Screen name="ServiceCategory" component={ServiceCategory} />
           <Stack.Screen
@@ -458,6 +464,7 @@ const MainApp = () => {
               animation: "slide_from_right",
             }}
           />
+          <Stack.Screen name="UserSupport" component={UserSupport} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -484,6 +491,11 @@ const MainApp = () => {
           />
           <Stack.Screen name="WorkerPayment" component={WorkerPayment} />
           <Stack.Screen name="WorkerAccount" component={WorkerAccount} />
+          <Stack.Screen name="WorkerMyOrder" component={WorkerMyOrder} />
+          <Stack.Screen name="Termsandcondtions" component={WorkerTNC} />
+          <Stack.Screen name="ViewMap" component={ViewMap} />
+          <Stack.Screen name="WorkerWallet" component={WorkerWallet} />
+          <Stack.Screen name="WorkerSupport" component={WorkerSupport} />
         </Stack.Navigator>
       </NavigationContainer>
     );
@@ -505,7 +517,7 @@ const MainApp = () => {
           <Stack.Screen name="UserSignup" component={UserSignupScreen} />
           <Stack.Screen name="UserServices" component={UserServices} />
           <Stack.Screen name="UserBookings" component={UserBookings} />
-          <Stack.Screen name="UserRewards" component={UserRewards} />
+          <Stack.Screen name="UserPayments" component={UserPayments} />
           <Stack.Screen name="UserAccount" component={UserAccount} />
           <Stack.Screen name="WorkerSignup" component={WorkerSignupScreen} />
 

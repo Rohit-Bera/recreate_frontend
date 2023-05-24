@@ -105,7 +105,7 @@ const UserSignupScreen = () => {
       if (response) {
         setLoader(false);
         ToastAndroid.show(
-          `Sign in Successfull!`,
+          `Registration Successfull!`,
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
@@ -113,7 +113,7 @@ const UserSignupScreen = () => {
         const { token, user } = response;
 
         dispatch(userData({ user, token }));
-        navigation.navigate("UserServices");
+        navigation.navigate("UserNav");
 
         setRegistration({
           address: "",

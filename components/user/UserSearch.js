@@ -25,7 +25,6 @@ import {
 } from "react-native-heroicons/solid";
 import { Platform } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import UserNav from "./UserNav";
 import { useSelector } from "react-redux";
 import { MagnifyingGlassIcon, XMarkIcon } from "react-native-heroicons/outline";
 import AsyncStorage from "@react-native-async-storage/async-storage";

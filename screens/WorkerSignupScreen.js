@@ -112,7 +112,7 @@ const WorkerSignupScreen = () => {
       if (response) {
         setLoader(false);
         ToastAndroid.show(
-          `Sign in Successfull!`,
+          `Registartion Successfull!`,
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
@@ -122,7 +122,7 @@ const WorkerSignupScreen = () => {
         const user = worker;
 
         dispatch(workerData({ user, token }));
-        navigation.navigate("WorkerRequests");
+        navigation.navigate("WorkerNav");
 
         setRegistration({
           city: "",

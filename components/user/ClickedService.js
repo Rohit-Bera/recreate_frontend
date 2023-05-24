@@ -30,7 +30,7 @@ import {
   bookService,
   getServicesForClickedApi,
 } from "../../services/Oneforall";
-import AppIntroSlider from "react-native-app-intro-slider";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 const ClickedService = ({ route }) => {
   const { clickedService, serviceId } = route.params;
@@ -40,17 +40,6 @@ const ClickedService = ({ route }) => {
   const [bookLoader, setBookLoader] = useState(false);
 
   const navigation = useNavigation();
-
-  const backAction = () => {
-    navigation.navigate("UserNav");
-
-    return true;
-  };
-
-  const backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    backAction
-  );
 
   const userToken = useSelector((state) => state.user).token;
 
@@ -66,41 +55,73 @@ const ClickedService = ({ route }) => {
     });
   }, []);
 
-  const bookClickedService = async () => {
-    setBookLoader(true);
-    console.log("userToken: ", userToken);
+  // -------------------------
+  // date picker
+  const minDate = new Date();
 
-    if (userToken !== "") {
-      const headers = { headers: { Authorization: `Bearer ${userToken}` } };
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
-      const result = await bookService({ headers, serviceId });
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
 
-      const { newBookedService, error } = result;
+  const bookClickedService = async (date) => {
+    const onClickOk = async () => {
+      if (userToken !== "") {
+        setBookLoader(true);
+        console.log("userToken: ", userToken);
 
-      if (error) {
+        const bDate = date.setDate(date.getDate() + 1);
+        console.log("bDate: ", new Date(bDate));
+        const bookedDate = new Date(bDate);
+
+        const headers = { headers: { Authorization: `Bearer ${userToken}` } };
+
+        const result = await bookService({ headers, serviceId, bookedDate });
+
+        const { newBookedService, error } = result;
+
+        if (error) {
+          ToastAndroid.show(
+            `${error.message}`,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+
+        if (newBookedService) {
+          ToastAndroid.show(
+            `Service was booked successfully!`,
+            ToastAndroid.SHORT,
+            ToastAndroid.BOTTOM
+          );
+        }
+
+        newBookedService ? setBookLoader(false) : setBookLoader(false);
+      } else {
         ToastAndroid.show(
-          `${error.message}`,
+          `please login first!`,
           ToastAndroid.SHORT,
           ToastAndroid.BOTTOM
         );
       }
+    };
 
-      if (newBookedService) {
-        ToastAndroid.show(
-          `Service was booked successfully!`,
-          ToastAndroid.SHORT,
-          ToastAndroid.BOTTOM
-        );
-      }
-
-      newBookedService ? setBookLoader(false) : setBookLoader(false);
-    } else {
-      ToastAndroid.show(
-        `please login first!`,
-        ToastAndroid.SHORT,
-        ToastAndroid.BOTTOM
-      );
-    }
+    Alert.alert(
+      "Book Clicked Service",
+      "Are you sure , you want to book this Service ?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => null,
+          style: "cancel",
+        },
+        {
+          text: "Ok",
+          onPress: () => onClickOk(),
+        },
+      ]
+    );
   };
 
   return (
@@ -177,7 +198,7 @@ const ClickedService = ({ route }) => {
                   justifyContent: "space-around",
                   borderRadius: 3,
                 }}
-                onPress={() => bookClickedService()}
+                onPress={() => setDatePickerVisibility(true)}
               >
                 {bookLoader ? (
                   <ActivityIndicator size={30} color={"white"} />
@@ -192,6 +213,18 @@ const ClickedService = ({ route }) => {
                   </Text>
                 )}
               </TouchableOpacity>
+
+              {/*----------------------------------------------------------------------- date modal */}
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={(date) => {
+                  bookClickedService(date);
+                  hideDatePicker();
+                }}
+                onCancel={hideDatePicker}
+                minimumDate={minDate}
+              />
             </View>
           </View>
         </View>

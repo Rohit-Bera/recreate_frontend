@@ -68,15 +68,6 @@ const UserServices = () => {
       "hardwareBackPress",
       backAction
     );
-
-    // navigation.setOptions({
-    //   headerBackground: () => (
-    //     <Image
-    //       style={{ height: 90, width: 115, marginLeft: 20 }}
-    //       source={{ Logo }}
-    //     />
-    //   ),
-    // });
   }, []);
 
   const [editStatus, setEditStatus] = useState(false); //edit address
@@ -104,7 +95,16 @@ const UserServices = () => {
       setLoader(false);
       ToastAndroid.show(`${error}`, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
     }
+
+    setLoader(false);
   };
+
+  const updateAdd = async (text) => {
+    // expo install expo-loaction
+    console.log("text: ", text);
+  };
+
+  const editAddress = async () => {};
 
   return (
     <KeyboardAwareScrollView
@@ -215,6 +215,7 @@ const UserServices = () => {
                         borderRadius: 8,
                         borderColor: "#30E3DF",
                       }}
+                      onChangeText={(text) => updateAdd(text)}
                     />
 
                     <TouchableOpacity

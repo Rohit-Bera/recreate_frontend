@@ -137,7 +137,6 @@ const ForgotScreen = () => {
                 justifyContent: "space-around",
                 alignItems: "center",
               }}
-              onPress={() => signIn()}
             >
               <Text style={{ color: "white" }}>submit</Text>
             </TouchableOpacity>
